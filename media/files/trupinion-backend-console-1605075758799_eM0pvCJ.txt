@@ -1,0 +1,28 @@
+System check identified some issues:
+
+WARNINGS:
+?: (urls.W005) URL namespace 'admin' isn't unique. You may not be able to reverse all URLs in this namespace
+Traceback (most recent call last):
+  File "manage.py", line 22, in <module>
+    main()
+  File "manage.py", line 18, in main
+    execute_from_command_line(sys.argv)
+  File "/app/.heroku/python/lib/python3.8/site-packages/django/core/management/__init__.py", line 401, in execute_from_command_line
+    utility.execute()
+  File "/app/.heroku/python/lib/python3.8/site-packages/django/core/management/__init__.py", line 395, in execute
+    self.fetch_command(subcommand).run_from_argv(self.argv)
+  File "/app/.heroku/python/lib/python3.8/site-packages/django/core/management/base.py", line 330, in run_from_argv
+    self.execute(*args, **cmd_options)
+  File "/app/.heroku/python/lib/python3.8/site-packages/django/core/management/base.py", line 371, in execute
+    output = self.handle(*args, **options)
+  File "/app/.heroku/python/lib/python3.8/site-packages/django/core/management/base.py", line 85, in wrapped
+    res = handle_func(*args, **kwargs)
+  File "/app/.heroku/python/lib/python3.8/site-packages/django/core/management/commands/makemigrations.py", line 87, in handle
+    loader = MigrationLoader(None, ignore_no_migrations=True)
+  File "/app/.heroku/python/lib/python3.8/site-packages/django/db/migrations/loader.py", line 53, in __init__
+    self.build_graph()
+  File "/app/.heroku/python/lib/python3.8/site-packages/django/db/migrations/loader.py", line 210, in build_graph
+    self.load_disk()
+  File "/app/.heroku/python/lib/python3.8/site-packages/django/db/migrations/loader.py", line 122, in load_disk
+    raise BadMigrationError(
+django.db.migrations.exceptions.BadMigrationError: Migration 0009_auto_20201104_1622 in app users has no Migration class

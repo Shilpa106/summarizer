@@ -1,0 +1,10 @@
+2020-11-03T10:02:54.524314+00:00 heroku[run.7559]: Awaiting client
+2020-11-03T10:02:54.564473+00:00 heroku[run.7559]: Starting process with command `python manage.py migrate`
+2020-11-03T10:03:08.603172+00:00 heroku[run.7559]: Process exited with status 0
+2020-11-03T10:03:08.648348+00:00 heroku[run.7559]: State changed from up to complete
+2020-11-03T10:03:46.079679+00:00 app[api]: Starting process with command `python manage.py createsuperuser` by user abdulla.bluethink@gmail.com
+2020-11-03T10:03:54.635220+00:00 heroku[run.9113]: State changed from starting to up
+2020-11-03T10:03:54.859214+00:00 heroku[run.9113]: Awaiting client
+2020-11-03T10:03:54.896257+00:00 heroku[run.9113]: Starting process with command `python manage.py createsuperuser`
+2020-11-03T10:04:27.259587+00:00 heroku[run.9113]: Process exited with status 0
+2020-11-03T10:04:27.333866+00:00 heroku[run.9113]: State changed from up to complete

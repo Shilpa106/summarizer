@@ -1,0 +1,1 @@
+web: gunicorn document_vault.wsgi --log-file -
