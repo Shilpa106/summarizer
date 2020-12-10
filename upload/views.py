@@ -10,6 +10,7 @@ from rest_framework.parsers import MultiPartParser, FormParser, FileUploadParser
 
 from .models import UploadFiles
 from .serializers import UploadFilesSerializer
+from upload.services import ocrContentReader
 
 
 
@@ -24,8 +25,17 @@ class UploadFileView(generics.ListCreateAPIView):
     serializer_class = UploadFilesSerializer
     lookup_field = 'id'
 
+    def get(self, request, format=None):
+        queryset = self.get_queryset()
+        serializer = self.serializer_class(queryset, many=True, context={'request': request})
+    
+        for i in serializer.data:
+            i.update({'ocr_content': ocrContentReader.ContentReader()})
+        
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
     def post(self, request, format=None, *args, **kwargs):
-        serializer = UploadFilesSerializer(data=request.data)
+        serializer = UploadFilesSerializer(data=request.data, context={'request': request})
         if serializer.is_valid():
             f = request.FILES['upload_file']
             path = 'media/files/%s' % f.name
@@ -36,8 +46,9 @@ class UploadFileView(generics.ListCreateAPIView):
             destination.close()
             serializer.save() 
 
-
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            serialize_data = serializer.data
+            serialize_data.update({'ocr_content': ocrContentReader.ContentReader()})
+            return Response(serialize_data, status=status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
