@@ -29,9 +29,21 @@ class UploadFileView(generics.ListCreateAPIView):
         queryset = self.get_queryset()
         serializer = self.serializer_class(queryset, many=True, context={'request': request})
     
-        # for i in serializer.data:
-            # if serializer.data["upload_file"].endsWith(".pdf"):
-            # i.update({'ocr_content': ocrContentReader.ContentReader()})
+        for i in serializer.data:
+            if i["upload_file"].endswith(".pdf"):
+                path = i["upload_file"]
+                # import pdb; pdb.set_trace()
+                new_path = path.split('/')
+                abs_path = ''
+                count = 3
+                for j in new_path[3:]:
+                    if count == (len(new_path)-1):
+                        abs_path = abs_path + j
+                    else:
+                        abs_path = abs_path + j + "/"
+                    count += 1
+                
+                i.update({'ocr_content': ocrContentReader.ContentReader(abs_path)})
 
         
         return Response(serializer.data, status=status.HTTP_200_OK)
