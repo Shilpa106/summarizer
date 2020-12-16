@@ -29,8 +29,10 @@ class UploadFileView(generics.ListCreateAPIView):
         queryset = self.get_queryset()
         serializer = self.serializer_class(queryset, many=True, context={'request': request})
     
-        for i in serializer.data:
-            i.update({'ocr_content': ocrContentReader.ContentReader()})
+        # for i in serializer.data:
+            # if serializer.data["upload_file"].endsWith(".pdf"):
+            # i.update({'ocr_content': ocrContentReader.ContentReader()})
+
         
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -47,7 +49,9 @@ class UploadFileView(generics.ListCreateAPIView):
             serializer.save() 
 
             serialize_data = serializer.data
-            serialize_data.update({'ocr_content': ocrContentReader.ContentReader()})
+            
+            if serializer.data["upload_file"].endswith(".pdf"):
+                serialize_data.update({'ocr_content': ocrContentReader.ContentReader(path)})
             return Response(serialize_data, status=status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
