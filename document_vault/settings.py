@@ -31,7 +31,7 @@ SECRET_KEY = 'ke0bv97*-wh=ehi=4(stnv*%i^@(toxk2jfuncxfxx+$e)a0ap'
 DEBUG = True
 
 # ALLOWED_HOSTS = []
-ALLOWED_HOSTS = ['ec2-18-184-242-154.eu-central-1.compute.amazonaws.com:8000']
+ALLOWED_HOSTS = ['ec2-52-59-213-57.eu-central-1.compute.amazonaws.com:8000', '172.31.39.128:8000']
 
 #User Model
 
