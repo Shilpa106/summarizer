@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 
 from pathlib import Path
+from datetime import timedelta
 import os
 import dj_database_url
 import django_heroku
@@ -31,6 +32,9 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+#User Model
+
+AUTH_USER_MODEL = 'Users.User'
 
 # Application definition
 
@@ -42,8 +46,15 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    'upload',
+    # 'upload',
+    'Users',
+    'Subscription',
+    'DocumentFeature',
+    'DocumentUpload',
+
+    'drf_yasg',
     'rest_framework',
+    'rest_framework.authtoken',
     'corsheaders',
 ]
 
@@ -70,6 +81,28 @@ CORS_ORIGIN_ALLOW_ALL = True
 #     "http://127.0.0.1:8000",
 #     "http://127.0.0.1:3000",
 # ]
+
+
+REST_FRAMEWORK = {
+    'NON_FIELD_ERRORS_KEY': 'error',
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework.authentication.TokenAuthentication'
+    )
+}
+
+
+# Token Life Setting 
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=1),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+    'ROTATE_REFRESH_TOKENS': False,
+}
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 
 
@@ -157,6 +190,12 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
+
+EMAIL_USE_TLS = True
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'globalkhabariabdulla@gmail.com'
+EMAIL_HOST_PASSWORD = 'Sameer783@'
 
 
 django_heroku.settings(locals())
