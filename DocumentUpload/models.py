@@ -14,7 +14,7 @@ class UploadFiles(models.Model):
     file_type           = models.CharField(max_length=20, null=True, blank=True, default='')
     upload_file         = models.FileField(upload_to='files/')
     file_size           = models.FloatField(default=0)
-    metadata            = models.JSONField(null=True, blank=True)
+    metadata            = models.TextField(null=True, blank=True)
     category            = models.CharField(max_length=100, default='Unknown')
     created_at          = models.DateTimeField(auto_now_add=True)
     updated_at          = models.DateTimeField(auto_now=True)
