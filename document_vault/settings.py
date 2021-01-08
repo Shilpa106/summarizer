@@ -30,7 +30,8 @@ SECRET_KEY = 'ke0bv97*-wh=ehi=4(stnv*%i^@(toxk2jfuncxfxx+$e)a0ap'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+# ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['ec2-18-184-242-154.eu-central-1.compute.amazonaws.com:8000']
 
 #User Model
 
