@@ -131,18 +131,18 @@ class LoginView(generics.GenericAPIView):
         
         if not request.session.get('detail'):
             if email is None or password is None:
-                return Response({'Error': message.messages['User']['FieldBlank']}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({'Error': message.messages['User']['FieldBlank'], 'status': False}, status=status.HTTP_400_BAD_REQUEST)
             
             if len(password) < 6:
-                return Response({'Error': message.messages['User']['LenPassword']}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({'Error': message.messages['User']['LenPassword'], 'status': False}, status=status.HTTP_400_BAD_REQUEST)
             
             try:
                 user = authenticate(email=email, password=password)
             except Exception as e:
-                return Response({'Error': message.messages['User']['InvalidCredentials']}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({'Error': message.messages['User']['InvalidCredentials'], 'status': False}, status=status.HTTP_400_BAD_REQUEST)
                 
             if user is None:
-                return Response({'Error': message.messages['User']['UserNone']}, status=status.HTTP_404_NOT_FOUND)
+                return Response({'Error': message.messages['User']['UserNone'], 'status': False}, status=status.HTTP_404_NOT_FOUND)
 
             if user.is_active == True:
                 login(request, user)
@@ -152,7 +152,7 @@ class LoginView(generics.GenericAPIView):
             else:
                 return Response({"Failed": "You are not verified"})
         else:
-            return Response({'Info': message.messages['User']['LoginInfo']})
+            return Response({'Info': message.messages['User']['LoginInfo'], 'status': True})
 
 
 

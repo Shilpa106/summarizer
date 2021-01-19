@@ -36,6 +36,7 @@ def generate_user_data(request, user):
     user_data['token'] = token.key
     user_data['id'] = user.id
     user_data['email'] = user.email
+    user_data['success'] = True
     request.session['detail'] = user_data
 
     return user_data
@@ -56,6 +57,7 @@ def generate_data(request, serializer):
     user_data = {}
     user_data['data'] = serializer.data
     user_data['message'] = 'Successfully Registered'
+    user_data['status'] = True
     
     # try:
     #     user = User.objects.get(email=user_data['data']['email'])
