@@ -1,5 +1,7 @@
 from django.shortcuts import render, HttpResponse
 from django.shortcuts import render, redirect
+from django.core.serializers.json import DjangoJSONEncoder
+
 from rest_framework import generics
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -13,9 +15,11 @@ from .serializers import UploadFilesSerializer
 from .services import ocrContentReader
 from .services.validatefiletype import validate_file_extension
 
-
+import json
+from datetime import datetime
 
 def home(request):
+    
     return HttpResponse('Home')
 
 
@@ -29,7 +33,7 @@ class UploadFileView(generics.ListAPIView):
     def get(self, request, format=None):
         queryset = self.get_queryset()
         serializer = self.serializer_class(queryset, many=True, context={'request': request})
-    
+
         for i in serializer.data:
             if i["upload_file"].endswith(".pdf"):
                 path = i["upload_file"]
@@ -46,7 +50,6 @@ class UploadFileView(generics.ListAPIView):
                 
                 i.update({'ocr_content': ocrContentReader.ContentReader(abs_path)})
 
-        
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
@@ -59,9 +62,12 @@ class UploadDocs(generics.CreateAPIView):
     lookup_field = 'id'
 
 
-    def post(self, request, format=None, *args, **kwargs):
-        serializer = UploadFilesSerializer(data=request.data, context={'request': request})
-
+    def post(self, request, *args, **kwargs):
+        try:
+            serializer = UploadFilesSerializer(data=request.data, context={'request': request})
+        except Exception as e:
+            return Response({'Error': e}, status=status.HTTP_400_BAD_REQUEST)
+        
         if validate_file_extension(serializer):
             if serializer.is_valid():
                 f = request.FILES['upload_file']
@@ -71,16 +77,30 @@ class UploadDocs(generics.CreateAPIView):
                     for chunk in f.chunks():
                         destination.write(chunk)
                 destination.close()
-                serializer.save() 
 
-                serialize_data = serializer.data
+                metadata = {}
+                metadata["name"] = f.name
+                metadata["type"] = (f.name).split('.')[1]
+                metadata["size"] = f.size
+                metadata["created_at"] = datetime.now()
+                jsondata = json.dumps(metadata, cls=DjangoJSONEncoder)
+
+
+                serializer.validated_data["file_type"] = metadata["type"]
+                serializer.validated_data["file_size"] = f.size 
+                serializer.validated_data["metadata"] = jsondata
                 
+
+                serializer.save()
+                serialize_data = serializer.data
+
                 if serializer.data["upload_file"].endswith(".pdf"):
                     serialize_data.update({'ocr_content': ocrContentReader.ContentReader(path)})
+
                 return Response(serialize_data, status=status.HTTP_201_CREATED)
             else:
                 return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        return Response({"Warning": "File type is not valid"})
+        return Response({"Warning": "File type is not valid"}, status=status.HTTP_406_NOT_ACCEPTABLE)
 
 
 

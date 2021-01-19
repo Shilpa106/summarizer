@@ -47,68 +47,68 @@ class RegisterView(generics.GenericAPIView):
         
         user_data = generate_data(request, serializer)
 
-        try:
-            db_temp = verification_template
-            send_temp = template.Template(db_temp)
-            context_msg = template.Context({'user':user_data['data']['email'], 'absurl':user_data['absurl']})
-            html_content = send_temp.render(context_msg)
-            text_content = strip_tags(html_content)
+        # try:
+        #     db_temp = verification_template
+        #     send_temp = template.Template(db_temp)
+        #     context_msg = template.Context({'user':user_data['data']['email'], 'absurl':user_data['absurl']})
+        #     html_content = send_temp.render(context_msg)
+        #     text_content = strip_tags(html_content)
 
-            data = {'email_body': text_content, 'to_email': user_data['data']['email'], 'email_subject': 'Verify Your Email', 'attach': html_content }
-            send_email(data) # uses delay to send email via celery 
-        except Exception as e:
-            # print("error",e)
-            return Response({'Wrong': message.messages['User']['Wrong']}, status=status.HTTP_400_BAD_REQUEST)
+        #     data = {'email_body': text_content, 'to_email': user_data['data']['email'], 'email_subject': 'Verify Your Email', 'attach': html_content }
+        #     send_email(data) # uses delay to send email via celery 
+        # except Exception as e:
+        #     # print("error",e)
+        #     return Response({'Wrong': message.messages['User']['Wrong']}, status=status.HTTP_400_BAD_REQUEST)
             
         return Response(user_data, status=status.HTTP_201_CREATED)
 
 
 
 # Verify Email View with verification link
-class VerifyEmail(generics.GenericAPIView):
-    serializer_class = VerifyEmailSerializer
+# class VerifyEmail(generics.GenericAPIView):
+#     serializer_class = VerifyEmailSerializer
 
-    def get(self, request):
-        '''
-        Method to verify an email and user during Registration
-        : Mehod : `GET`
-        : Params : `Token sent via email`
-        : Process : `After veryfiyng, User will automatically login and Welcome email will be sent for first time`
+#     def get(self, request):
+#         '''
+#         Method to verify an email and user during Registration
+#         : Mehod : `GET`
+#         : Params : `Token sent via email`
+#         : Process : `After veryfiyng, User will automatically login and Welcome email will be sent for first time`
 
-        '''
+#         '''
 
-        token = request.GET.get('token')
-        try:
-            payload = jwt.decode(token, settings.SECRET_KEY)  # encode the received token
-            user = User.objects.get(id=payload['user_id'])
+#         token = request.GET.get('token')
+#         try:
+#             payload = jwt.decode(token, settings.SECRET_KEY)  # encode the received token
+#             user = User.objects.get(id=payload['user_id'])
 
-            if not user.is_verified:
-                user.is_verified = True
-                user.save()
+#             if not user.is_verified:
+#                 user.is_verified = True
+#                 user.save()
 
-                # code to send welcome email to after verification
-                data = {}
+#                 # code to send welcome email to after verification
+#                 data = {}
     
-                text_content = '<p>Welcome to the <strong>Community</strong>.</p>'
-                data = {'email_body': text_content, 'to_email': user.email, 'email_subject': 'Welcome', 'attach': text_content }
-                send_email(data) # uses delay to send email via celery
+#                 text_content = '<p>Welcome to the <strong>Community</strong>.</p>'
+#                 data = {'email_body': text_content, 'to_email': user.email, 'email_subject': 'Welcome', 'attach': text_content }
+#                 send_email(data) # uses delay to send email via celery
                 
 
-            if not request.session.get('detail'):
-                login(request, user)
-            else:
-                return Response({"Message": message.messages['User']['AlreadyVerifiedLoggedIn']})
+#             if not request.session.get('detail'):
+#                 login(request, user)
+#             else:
+#                 return Response({"Message": message.messages['User']['AlreadyVerifiedLoggedIn']})
 
-            user_data = generate_user_data(request, user) #Generate data using function call
-            user_data['Success'] = message.messages['User']['EmailVerified']
+#             user_data = generate_user_data(request, user) #Generate data using function call
+#             user_data['Success'] = message.messages['User']['EmailVerified']
 
-            return Response(user_data, status=status.HTTP_200_OK )
+#             return Response(user_data, status=status.HTTP_200_OK )
 
-        except jwt.ExpiredSignatureError as e:
-            return Response({'Error': 'Signature Expired'}, status=status.HTTP_400_BAD_REQUEST)
+#         except jwt.ExpiredSignatureError as e:
+#             return Response({'Error': 'Signature Expired'}, status=status.HTTP_400_BAD_REQUEST)
 
-        except jwt.exceptions.DecodeError as e:
-            return Response({'Error': 'Invalid Token'}, status=status.HTTP_400_BAD_REQUEST)
+#         except jwt.exceptions.DecodeError as e:
+#             return Response({'Error': 'Invalid Token'}, status=status.HTTP_400_BAD_REQUEST)
 
      
 
@@ -144,7 +144,7 @@ class LoginView(generics.GenericAPIView):
             if user is None:
                 return Response({'Error': message.messages['User']['UserNone']}, status=status.HTTP_404_NOT_FOUND)
 
-            if user.is_active == True and user.is_verified == True:
+            if user.is_active == True:
                 login(request, user)
                 user_data = generate_user_data(request, user) #Generate data using function call
                 return Response(user_data, status=status.HTTP_200_OK)

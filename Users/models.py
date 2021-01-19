@@ -19,7 +19,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     mobile       = models.CharField(max_length=15, validators=[phone_regex], blank=True, null=True)
     first_name   = models.CharField(max_length=100, blank=True, null=True)
     last_name   = models.CharField(max_length=100, blank=True, null=True)
-    is_verified = models.BooleanField(default=False)
+    # is_verified = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)

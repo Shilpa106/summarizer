@@ -47,12 +47,12 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    # 'upload',
     'Users',
     'Subscription',
     'DocumentFeature',
     'DocumentUpload',
 
+    # 'gdstorage',
     'drf_yasg',
     'rest_framework',
     'rest_framework.authtoken',
@@ -60,6 +60,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'middlewares.request_middleware.RequestMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -85,6 +86,7 @@ CORS_ORIGIN_ALLOW_ALL = True
 
 
 REST_FRAMEWORK = {
+    'COERCE_DECIMAL_TO_STRING': False, # To show all the decimal value in decimal not str
     'NON_FIELD_ERRORS_KEY': 'error',
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
@@ -190,6 +192,10 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 # Media
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
+
+
+GOOGLE_DRIVE_STORAGE_JSON_KEY_FILE = 'GoogleDriveUpload-027e9d367d8f.json'
+# GOOGLE_DRIVE_STORAGE_MEDIA_ROOT = 'files'
 
 
 EMAIL_USE_TLS = True

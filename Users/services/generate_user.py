@@ -55,20 +55,20 @@ def generate_data(request, serializer):
     
     user_data = {}
     user_data['data'] = serializer.data
-    user_data['message'] = message.messages['User']['VerifyEmail']
+    user_data['message'] = 'Successfully Registered'
     
-    try:
-        user = User.objects.get(email=user_data['data']['email'])
-        token = RefreshToken.for_user(user).access_token
-    except Exception as e:
-        return Response({'Error': 'Invalid Email'})
+    # try:
+    #     user = User.objects.get(email=user_data['data']['email'])
+    #     token = RefreshToken.for_user(user).access_token
+    # except Exception as e:
+    #     return Response({'Error': 'Invalid Email'})
 
-    current_site = str(get_current_site(request))
-    relative_link = reverse('verify-email')
+    # current_site = str(get_current_site(request))
+    # relative_link = reverse('verify-email')
 
-    absurl = f"http://{current_site}{relative_link}?token={str(token)}"
+    # absurl = f"http://{current_site}{relative_link}?token={str(token)}"
     
     # https://trupinion-survey.herokuapp.com/api/v1/users/verify-email/?token={str(token)}
     # absurl = f"https://trupinion-react.netlify.app/#/login-by-token/{str(token)}"
-    user_data['absurl'] = absurl
+    # user_data['absurl'] = absurl
     return user_data
