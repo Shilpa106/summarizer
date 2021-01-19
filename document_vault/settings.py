@@ -52,7 +52,7 @@ INSTALLED_APPS = [
     'DocumentFeature',
     'DocumentUpload',
 
-    # 'gdstorage',
+    'gdstorage',
     'drf_yasg',
     'rest_framework',
     'rest_framework.authtoken',
