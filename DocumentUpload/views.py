@@ -111,8 +111,6 @@ class UploadFileDetails(generics.RetrieveUpdateDestroyAPIView):
     lookup_field = 'id'
 
 
-
-
 class DocumentsByMe(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
     queryset = UploadFiles.objects.all()
