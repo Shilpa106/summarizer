@@ -1,13 +1,20 @@
 from django.db import models
 
 
+'''
+    Feature List:
+        title name
+        total number of pages
+        total word count
+        total images
+        content
+        total paragraphs
+        lookup word
+'''
+
 
 class Feature(models.Model):
-    title        = models.CharField(max_length=100)
-    total_pages = models.IntegerField(default=0)
-    word_count  = models.IntegerField(default=0)
-    image_count = models.IntegerField(default=0)
-    etc         = models.CharField(max_length=100)
+    name        = models.CharField(max_length=100)
     
 
 
