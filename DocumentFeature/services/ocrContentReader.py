@@ -11,7 +11,7 @@ def ContentReader(filepath, id):
 
     if id == 2:
         num_pages = pdf_reader.getNumPages()
-        data["No of Pages"] = num_pages
+        data["Total no of Pages"] = num_pages
     elif id == 5:
         page = pdf_reader.getPage(0)
         content = page.extractText()
