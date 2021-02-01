@@ -77,10 +77,10 @@ class UploadDocs(generics.CreateAPIView):
                     for chunk in f.chunks():
                         destination.write(chunk)
                 destination.close()
-
+                arr = (f.name).split('.')
                 metadata = {}
                 metadata["name"] = f.name
-                metadata["type"] = (f.name).split('.')[1]
+                metadata["type"] = arr[-1]
                 metadata["size"] = f.size
                 metadata["created_at"] = datetime.now()
                 jsondata = json.dumps(metadata, cls=DjangoJSONEncoder)
