@@ -47,10 +47,10 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    'Users',
-    'Subscription',
-    'DocumentFeature',
-    'DocumentUpload',
+    'Users.apps.UsersConfig',
+    'Subscription.apps.SubscriptionConfig',
+    'DocumentFeature.apps.DocumentfeatureConfig',
+    'DocumentUpload.apps.DocumentuploadConfig',
 
     'gdstorage',
     'drf_yasg',
