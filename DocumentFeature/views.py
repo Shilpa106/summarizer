@@ -13,7 +13,7 @@ from .services.ocrContentReader import ContentReader
 
 import os
 from DocumentFeature import features
-
+import json
 
 """
 FeaturesList
@@ -31,8 +31,10 @@ class FeaturesList(APIView):
         #     {"id": 7, "name": "Lookup Word"},   
         #     {"id": 8, "name": "Another One"}, 
         # ]
+        feature = features.get_features()
+        # print(feature)
         
-        return Response({'features_list': features}, status=status.HTTP_200_OK)
+        return Response({'features_list': feature}, status=status.HTTP_200_OK)
 
 """
 FeatureView
