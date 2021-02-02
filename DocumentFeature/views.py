@@ -12,34 +12,32 @@ from DocumentUpload.models import UploadFiles
 from .services.ocrContentReader import ContentReader
 
 import os
+from DocumentFeature import features
 
 
-# class FeaturesList(generics.ListAPIView):
-#     queryset = Feature.objects.all()
-#     serializer_class = FeatureSerializer
-
-
-#     def get(self, request, format=None):
-#         all_feature = self.get_queryset()
-#         serializer = self.serializer_class(all_feature, many=True)
-#         return Response(serializer.data, status=status.HTTP_200_OK)
-
-
+"""
+FeaturesList
+    - Prepares the list of features yet to shift into database
+"""
 class FeaturesList(APIView):
     def get(self, request, format=None):
-        features = [
-            {"id": 1, "name": "Title Name"},
-            {"id": 2, "name": "Total no of Pages"},
-            {"id": 3, "name": "Total Word Count"},
-            {"id": 4, "name": "Total Images"},
-            {"id": 5, "name": "Content"},
-            {"id": 6, "name": "Total Paragraphs"},
-            {"id": 7, "name": "Lookup Word"},   
-        ]
+        # features = [
+        #     {"id": 1, "name": "Title Name"},
+        #     {"id": 2, "name": "Total no of Pages"},
+        #     {"id": 3, "name": "Total Word Count"},
+        #     {"id": 4, "name": "Total Images"},
+        #     {"id": 5, "name": "Content"},
+        #     {"id": 6, "name": "Total Paragraphs"},
+        #     {"id": 7, "name": "Lookup Word"},   
+        #     {"id": 8, "name": "Another One"}, 
+        # ]
         
         return Response({'features_list': features}, status=status.HTTP_200_OK)
 
-
+"""
+FeatureView
+    - returns back the value based on the selected feature
+"""
 class FeatureView(APIView):
     
     def get(self, request, id, doc_id, format=None):
@@ -50,11 +48,21 @@ class FeatureView(APIView):
         #     print(e)
         #     return Response({'Info': 'No Feature with this id'})
         try:
+            # extracts the extension out of the file type 
             docs = UploadFiles.objects.get(id=doc_id)
             docs_file = (docs.upload_file.url).strip("'")
             docs_file = docs_file.lstrip("/")
+
+            title = None
+            for feature in features: 
+                if feature.id == id:
+                    title = feature.name
+                    break
+
+            print("Title : " , title)
+                    
             if docs_file.endswith(".pdf"):
-                content = ContentReader(docs_file, id)
+                content = ContentReader(docs_file, id, title )
                 # print(content)
                 return Response(content)
             else:
