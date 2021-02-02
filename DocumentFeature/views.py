@@ -49,27 +49,28 @@ class FeatureView(APIView):
         # except Exception as e:
         #     print(e)
         #     return Response({'Info': 'No Feature with this id'})
-        try:
+        # try:
             # extracts the extension out of the file type 
-            docs = UploadFiles.objects.get(id=doc_id)
-            docs_file = (docs.upload_file.url).strip("'")
-            docs_file = docs_file.lstrip("/")
+        docs = UploadFiles.objects.get(id=doc_id)
+        docs_file = (docs.upload_file.url).strip("'")
+        docs_file = docs_file.lstrip("/")
 
-            title = None
-            for feature in features: 
-                if feature.id == id:
-                    title = feature.name
-                    break
+        title = None
+        for feature in features.get_features():
+            print(feature) 
+            if feature['id'] == id:
+                title = feature['name']
+                break
 
-            print("Title : " , title)
-                    
-            if docs_file.endswith(".pdf"):
-                content = ContentReader(docs_file, id, title )
-                # print(content)
-                return Response(content)
-            else:
-                return Response({'Info': 'Not a PDF document type', 'status': False})
-        except Exception as e:
-            return Response({"Info": "Document does not exist with this id"})
-        # import pdb; pdb.set_trace()
+        print("Title : " , title)
+                
+        if docs_file.endswith(".pdf"):
+            content = ContentReader(docs_file, id, title )
+            # print(content)
+            return Response(content)
+        else:
+            return Response({'Info': 'Not a PDF document type', 'status': False})
+        # except Exception as e:
+        #     return Response({"Info": "Document does not exist with this id"})
+        # # import pdb; pdb.set_trace()
         
