@@ -10,4 +10,5 @@ def get_features():
             {"id": 6, "name": "Total Paragraphs"},
             {"id": 7, "name": "Lookup Word"},   
             {"id": 8, "name": "Another One"}, 
+            {"id": 9, "name": "Book Cover Title"}, 
         ]
