@@ -21,6 +21,8 @@ def ContentReader(filepath, feature_id, feature_title):
         # data["Content"] = content
     elif feature_id == 8:
         content = "value for another one.. "
+    elif feature_id == 9: 
+        content = "Pricing Recommendation using Machine Learning"
     else:
         feature_title = "Empty"
         content = "Empty"
