@@ -10,7 +10,7 @@ from .models import ResultFeature
 from DocumentUpload.models import UploadFiles
 from DocumentFeature.models import ResultFeature, FeatureList
 
-from .services.ocrContentReader import ContentReader
+# from .services.ocrContentReader import ContentReader
 from DocumentUpload.services.updateFeature import FetureThread
 
 import threading

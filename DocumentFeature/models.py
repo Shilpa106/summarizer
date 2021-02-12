@@ -16,7 +16,7 @@ from DocumentUpload.models import UploadFiles
 
 class ResultFeature(models.Model):
     docs_id     = models.ForeignKey(UploadFiles, on_delete=models.CASCADE)
-    body        = models.JSONField()
+    body        = models.TextField()
 
     def __str__(self):
         return self.docs_id.file_type
