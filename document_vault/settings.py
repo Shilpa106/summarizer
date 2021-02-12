@@ -52,7 +52,6 @@ INSTALLED_APPS = [
     'DocumentFeature.apps.DocumentfeatureConfig',
     'DocumentUpload.apps.DocumentuploadConfig',
 
-    'gdstorage',
     'drf_yasg',
     'rest_framework',
     'rest_framework.authtoken',
@@ -194,8 +193,22 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
 
+# GDrive File Upload Settings
 GOOGLE_DRIVE_STORAGE_JSON_KEY_FILE = 'GoogleDriveUpload-027e9d367d8f.json'
-# GOOGLE_DRIVE_STORAGE_MEDIA_ROOT = 'files'
+GOOGLE_DRIVE_STORAGE_MEDIA_ROOT = '16L081recrstgjYnfa8PhZu6prNbVdj-p?usp=sharing'
+FOLDER_ID = '16L081recrstgjYnfa8PhZu6prNbVdj-p'
+SCOPES = ['https://www.googleapis.com/auth/drive']
+PERMISSION1 = {
+            'type': 'user',
+            'role': 'writer',
+            'emailAddress': 'globalkhabariabdulla@gmail.com',  # Please set your email of Google account.
+            }
+PERMISSION2 = {
+            'type': 'anyone',
+            'role': 'reader',
+            }
+
+
 
 
 EMAIL_USE_TLS = True

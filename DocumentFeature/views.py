@@ -6,14 +6,18 @@ from rest_framework.response import Response
 from rest_framework import status
 
 from .serializers import FeatureSerializer
-from .models import Feature
+from .models import ResultFeature
 from DocumentUpload.models import UploadFiles
+from DocumentFeature.models import ResultFeature, FeatureList
 
 from .services.ocrContentReader import ContentReader
+from DocumentUpload.services.updateFeature import FetureThread
 
+import threading
 import os
 from DocumentFeature import features
 import json
+
 
 """
 FeaturesList
@@ -21,20 +25,23 @@ FeaturesList
 """
 class FeaturesList(APIView):
     def get(self, request, format=None):
-        # features = [
-        #     {"id": 1, "name": "Title Name"},
-        #     {"id": 2, "name": "Total no of Pages"},
-        #     {"id": 3, "name": "Total Word Count"},
-        #     {"id": 4, "name": "Total Images"},
-        #     {"id": 5, "name": "Content"},
-        #     {"id": 6, "name": "Total Paragraphs"},
-        #     {"id": 7, "name": "Lookup Word"},   
-        #     {"id": 8, "name": "Another One"}, 
-        # ]
         feature = features.get_features()
         # print(feature)
-        
         return Response({'features_list': feature}, status=status.HTTP_200_OK)
+
+
+'''
+getValue 
+ - @params {class} - template 
+'''
+# def getValue(template : class, key : str, value) -> object: 
+#     response = None
+#     try:
+#         response = template.objects.select_related(key).get(key=value)
+#     except Exception as e:
+#         print(e)
+
+#     return response
 
 """
 FeatureView
@@ -43,34 +50,32 @@ FeatureView
 class FeatureView(APIView):
     
     def get(self, request, id, doc_id, format=None):
-        # try:
-        #     feature = Feature.objects.get(id=id)
-        #     print(feature)
-        # except Exception as e:
-        #     print(e)
-        #     return Response({'Info': 'No Feature with this id'})
-        # try:
+        try:
             # extracts the extension out of the file type 
-        docs = UploadFiles.objects.get(id=doc_id)
-        docs_file = (docs.upload_file.url).strip("'")
-        docs_file = docs_file.lstrip("/")
+            # getValue(ResultFeature, "docs_id", doc_id)
+            docs_feature = ResultFeature.objects.select_related('docs_id').get(docs_id=doc_id)
+        except Exception as e:
+            for i in threading.enumerate():
+                if i.name == str(doc_id):
+                    print("Thread Name: ",i.name)
+                    return Response({"Info": "We are processing your documnets, Please try after sometimes."})
+            else:
+                print("Else after for")
+                pass
+                # Celery task will perform here        
+        try:
+            feature = (FeatureList.objects.get(id=id))
+            print("Feature-Title: ", feature)
 
-        title = None
-        for feature in features.get_features():
-            print(feature) 
-            if feature['id'] == id:
-                title = feature['name']
-                break
-
-        print("Title : " , title)
-                
-        if docs_file.endswith(".pdf"):
-            content = ContentReader(docs_file, id, title )
-            # print(content)
-            return Response(content)
-        else:
-            return Response({'Info': 'Not a PDF document type', 'status': False})
-        # except Exception as e:
-        #     return Response({"Info": "Document does not exist with this id"})
-        # # import pdb; pdb.set_trace()
+            if docs_feature.docs_id.file_type == 'pdf':
+                content = json.loads(docs_feature.body) #json.loads can be with for loop
+                for i,j in content.items():
+                    if i == str(feature.name):
+                        return Response({str(i):j})
+                else:
+                    return Response({"Info":"We will add this feature soon"})
+            else:
+                return Response({'Info': 'Not a PDF document type', 'status': False})
+        except Exception as e:
+            return Response({"Info": "Feature Id didn't match something went wrong", 'status': False})
         

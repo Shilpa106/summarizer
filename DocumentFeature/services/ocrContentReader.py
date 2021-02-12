@@ -1,6 +1,12 @@
 import PyPDF2
 from PyPDF2 import PdfFileReader
 
+import io
+import os
+import requests
+from urllib.request import urlopen, Request
+
+
 """
 ContentReader
     - Based on the library, it performs the file based operation which ever applicable 
@@ -8,9 +14,11 @@ ContentReader
 """
 def ContentReader(filepath, feature_id, feature_title):
     data = {}
-    pdf = open(filepath, "rb")
-
-    # Creating pdf reader object.
+    # pdf = open(filepath, "rb")
+    path = filepath.split('/')[5]
+    res = gDriveFileDownload(path)
+    
+    pdf = open(res, 'rb')
     pdf_reader = PyPDF2.PdfFileReader(pdf)
 
     if feature_id == 2:
@@ -29,4 +37,6 @@ def ContentReader(filepath, feature_id, feature_title):
     data[feature_title] = content
 
     pdf.close()
+    if os.path.exists(res):
+        os.remove(res)
     return data

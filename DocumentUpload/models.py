@@ -1,9 +1,6 @@
 from django.db import models
 from django.contrib.auth import get_user_model
 
-from DocumentFeature.models import Feature
-# from .services.driveupload import get_gd_storage
-
 User = get_user_model()
 
 
@@ -23,17 +20,4 @@ class UploadFiles(models.Model):
         verbose_name_plural = 'Upload Files'
 
     def __str__(self):
-        return str(self.upload_file.name)
-
-
-
-class DocumentFeature(models.Model):
-    name                = models.CharField(max_length=100)
-    feature             = models.ForeignKey(Feature, on_delete=models.CASCADE)
-    is_active           = models.BooleanField(default=True)
-    created_at          = models.DateTimeField(auto_now_add=True)
-    updated_at          = models.DateTimeField(auto_now=True)
-
-
-    def __str__(Self):
-        return Self.name
+        return self.file_name or self.file_type + " by " + str(self.user_id.username)

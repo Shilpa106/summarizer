@@ -1,11 +1,11 @@
-from .models import Feature
+from .models import ResultFeature
 
 from rest_framework import serializers
 
 
 class FeatureSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Feature
+        model = ResultFeature
         fields = '__all__'
 
 

@@ -1,6 +1,7 @@
 from django.shortcuts import render, HttpResponse
 from django.shortcuts import render, redirect
 from django.core.serializers.json import DjangoJSONEncoder
+from django.core.files.storage import default_storage
 
 from rest_framework import generics
 from rest_framework.views import APIView
@@ -12,15 +13,22 @@ from rest_framework.parsers import MultiPartParser, FormParser, FileUploadParser
 
 from .models import UploadFiles
 from .serializers import UploadFilesSerializer
-from .services import ocrContentReader
+# from .services import ocrContentReader
+from .services.updateFeature import FetureThread
+from .services.driveupload import gServiceAccount, gDriveUpload
 from .services.validatefiletype import validate_file_extension
 
 import json
 from datetime import datetime
+from apiclient.http import MediaFileUpload, MediaIoBaseUpload
+import io
+import os
+import threading
+
 
 def home(request):
-    
-    return HttpResponse('Home')
+    design = '<h1 style="background-color:MediumSeaGreen;text-align:center;margin-top:250px;">Welcome to Summarizar!</h1>'
+    return HttpResponse(design)
 
 
 
@@ -30,27 +38,27 @@ class UploadFileView(generics.ListAPIView):
     serializer_class = UploadFilesSerializer
     lookup_field = 'id'
 
-    def get(self, request, format=None):
-        queryset = self.get_queryset()
-        serializer = self.serializer_class(queryset, many=True, context={'request': request})
+    # def get(self, request, format=None):
+    #     queryset = self.get_queryset()
+    #     serializer = self.serializer_class(queryset, many=True, context={'request': request})
 
-        for i in serializer.data:
-            if i["upload_file"].endswith(".pdf"):
-                path = i["upload_file"]
-                new_path = path.split('/')  # spliting the file name from whole url
-                abs_path = ''
-                count = 3 # starting count 3 due to http[0], 127.....[1], path[2], <filename>.pdf[3] 
-                for j in new_path[3:]:
-                    # appending / and scape / in the end for absolute path
-                    if count == (len(new_path)-1):
-                        abs_path = abs_path + j
-                    else:
-                        abs_path = abs_path + j + "/"
-                    count += 1
+        # for i in serializer.data:
+        #     if i["upload_file"].endswith(".pdf"):
+        #         path = i["upload_file"]
+        #         new_path = path.split('/')  # spliting the file name from whole url
+        #         abs_path = ''
+        #         count = 3 # starting count 3 due to http[0], 127.....[1], path[2], <filename>.pdf[3] 
+        #         for j in new_path[3:]:
+        #             # appending / and scape / in the end for absolute path
+        #             if count == (len(new_path)-1):
+        #                 abs_path = abs_path + j
+        #             else:
+        #                 abs_path = abs_path + j + "/"
+        #             count += 1
                 
-                i.update({'ocr_content': ocrContentReader.ContentReader(abs_path)})
+        #         i.update({'ocr_content': ocrContentReader.ContentReader(abs_path)})
 
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        # return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 
@@ -73,10 +81,8 @@ class UploadDocs(generics.CreateAPIView):
                 f = request.FILES['upload_file']
                 path = 'media/files/%s' % f.name
 
-                with open(path, 'wb+') as destination:
-                    for chunk in f.chunks():
-                        destination.write(chunk)
-                destination.close()
+                get_link = gDriveUpload(f) # Function call to upload files on gDrive and get url
+
                 arr = (f.name).split('.')
                 metadata = {}
                 metadata["name"] = f.name
@@ -85,7 +91,7 @@ class UploadDocs(generics.CreateAPIView):
                 metadata["created_at"] = datetime.now()
                 jsondata = json.dumps(metadata, cls=DjangoJSONEncoder)
 
-
+                serializer.validated_data["upload_file"] = get_link
                 serializer.validated_data["file_type"] = metadata["type"]
                 serializer.validated_data["file_size"] = f.size 
                 serializer.validated_data["metadata"] = jsondata
@@ -93,9 +99,17 @@ class UploadDocs(generics.CreateAPIView):
 
                 serializer.save()
                 serialize_data = serializer.data
-
-                if serializer.data["upload_file"].endswith(".pdf"):
-                    serialize_data.update({'ocr_content': ocrContentReader.ContentReader(path)})
+                docsid = serialize_data['id']
+                if get_link:
+                    with default_storage.open(f'{str(docsid)}{f.name}', 'wb+') as fs:
+                        for chunk in f.chunks():
+                            fs.write(chunk)
+                        fs.close()
+                    process = FetureThread(f'{f.name}', docsid)
+                    process.name = docsid
+                    process.daemon = True
+                    process.start()
+                    
 
                 return Response(serialize_data, status=status.HTTP_201_CREATED)
             else:
@@ -110,6 +124,17 @@ class UploadFileDetails(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = UploadFilesSerializer
     lookup_field = 'id'
 
+    def get(self, request, id, *args, **kwargs):
+        try:
+            my_file = self.get_queryset().get(id=id)
+            serializer = self.serializer_class(my_file, context={'request': request})
+            serialized_data = serializer.data
+            url = lambda uri : ('https:/' + uri.split('%3A')[1]) if '%3A' in uri else uri
+            serialized_data['upload_file'] = url(serialized_data['upload_file'])
+            return Response(serialized_data)
+        except Exception as e:
+            return Response({"Info": "Id not Found"})
+
 
 class DocumentsByMe(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
@@ -120,6 +145,10 @@ class DocumentsByMe(generics.ListAPIView):
     def get(self, request, format=None):
         docsList = self.get_queryset().filter(user_id=request.user)
         serializer = self.serializer_class(docsList, many=True, context={'request': request})
+        for d in serializer.data:
+            url = lambda uri : ('https:/' + uri.split('%3A')[1]) if '%3A' in uri else uri
+            # print(url(d['upload_file']))
+            d['upload_file'] = url(d['upload_file'])
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 

@@ -1,5 +1,6 @@
 from django.contrib import admin
 
-from .models import Feature
+from .models import ResultFeature, FeatureList
 
-admin.site.register(Feature)
+admin.site.register(ResultFeature)
+admin.site.register(FeatureList)

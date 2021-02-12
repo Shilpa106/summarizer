@@ -1,27 +1,43 @@
 import PyPDF2
 from PyPDF2 import PdfFileReader
 
+import io
+import os
+import requests
+from urllib.request import urlopen, Request
 
+
+"""
+ContentReader
+    - Based on the library, it performs the file based operation which ever applicable 
+    - later on would get replaced by Factory Pattern later on for providing support for pdf, images , and other doc types
+"""
 def ContentReader(filepath):
-    # // check for file existance
-    # Creating a pdf file object.
-    pdf = open(filepath, "rb")
-
-    # Creating pdf reader object.
+    data = {}
+    
+    pdf = open(filepath, 'rb')
     pdf_reader = PyPDF2.PdfFileReader(pdf)
 
-    # Checking total number of pages in a pdf file.
-    # print("Total number of Pages:", pdf_reader.numPages)
-
-    # Creating a page object.
+    no_of_pages = pdf_reader.getNumPages()
     page = pdf_reader.getPage(0)
-    # print(page)
-    # Extract data from a specific page number.
-    content = page.extractText()  # 200 
-    # content = page.getContents()  # 200 
-    # print("Content ", content)
-    # Closing the object.
-    pdf.close()
+    content = page.extractText()
+    data['Total no of Pages'] = no_of_pages
+    data['Content'] = content
+    
+    # if feature_id == 2:
+    #     content = pdf_reader.getNumPages()
+    # elif feature_id == 5:
+    #     page = pdf_reader.getPage(0)
+    #     content = page.extractText()
+    #     # data["Content"] = content
+    # elif feature_id == 8:
+    #     content = "value for another one.. "
+    # else:
+    #     feature_title = "Empty"
+    #     content = "Empty"
+    #     # data["Empty"] = "Empty"
 
-    # // all your code here comes here..
-    return content
+    # data[feature_title] = content
+
+    pdf.close()
+    return data

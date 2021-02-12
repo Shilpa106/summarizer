@@ -1,7 +1,6 @@
 from django.contrib import admin
 
-from .models import UploadFiles, DocumentFeature
+from .models import UploadFiles
 
 
 admin.site.register(UploadFiles)
-admin.site.register(DocumentFeature)

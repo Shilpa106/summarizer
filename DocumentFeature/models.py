@@ -1,4 +1,5 @@
 from django.db import models
+from DocumentUpload.models import UploadFiles
 
 
 '''
@@ -13,10 +14,15 @@ from django.db import models
 '''
 
 
-class Feature(models.Model):
-    name        = models.CharField(max_length=100)
-    
+class ResultFeature(models.Model):
+    docs_id     = models.ForeignKey(UploadFiles, on_delete=models.CASCADE)
+    body        = models.JSONField()
 
+    def __str__(self):
+        return self.docs_id.file_type
+
+class FeatureList(models.Model):
+    name = models.CharField(max_length=100)
 
     def __str__(self):
         return self.name
