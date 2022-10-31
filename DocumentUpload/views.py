@@ -84,6 +84,7 @@ class UploadDocs(generics.CreateAPIView):
                 get_link = gDriveUpload(f) # Function call to upload files on gDrive and get url
 
                 arr = (f.name).split('.')
+                
                 metadata = {}
                 metadata["name"] = f.name
                 metadata["type"] = arr[-1]

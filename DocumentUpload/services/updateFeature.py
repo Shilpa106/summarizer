@@ -16,8 +16,8 @@ class FetureThread(threading.Thread):
         threading.Thread.__init__(self) # daemon=True
 
     def run(self):
-        print("Waiting For 50 Seconds...")
-        time.sleep(50)
+        # print("Waiting For 50 Seconds...")
+        # time.sleep(50)
         print(self.filepath)
         try:
             id = UploadFiles.objects.get(id=self.doc_id)

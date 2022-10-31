@@ -55,12 +55,13 @@ class RegisterView(generics.GenericAPIView):
         #     text_content = strip_tags(html_content)
 
         #     data = {'email_body': text_content, 'to_email': user_data['data']['email'], 'email_subject': 'Verify Your Email', 'attach': html_content }
-        #     send_email(data) # uses delay to send email via celery 
+        #     send_email(data) # uses delay to send email via celery
+        #     return Response(user_data, status=status.HTTP_201_CREATED) 
         # except Exception as e:
-        #     # print("error",e)
+        #     print("error",e)
         #     return Response({'Wrong': message.messages['User']['Wrong']}, status=status.HTTP_400_BAD_REQUEST)
-            
         return Response(user_data, status=status.HTTP_201_CREATED)
+        
 
 
 

@@ -70,7 +70,7 @@ def generate_data(request, serializer):
 
     # absurl = f"http://{current_site}{relative_link}?token={str(token)}"
     
-    # https://trupinion-survey.herokuapp.com/api/v1/users/verify-email/?token={str(token)}
-    # absurl = f"https://trupinion-react.netlify.app/#/login-by-token/{str(token)}"
+    # # https://trupinion-survey.herokuapp.com/api/v1/users/verify-email/?token={str(token)}
+    # # absurl = f"https://trupinion-react.netlify.app/#/login-by-token/{str(token)}"
     # user_data['absurl'] = absurl
     return user_data

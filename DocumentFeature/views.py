@@ -41,7 +41,13 @@ getValue
 #     except Exception as e:
 #         print(e)
 
-#     return response
+def get_or_none(classmodel, **kwargs):
+    try:
+        print(kwargs)
+        return classmodel.objects.select_related('docs_id').get(docs_id=kwargs['docs_id'])
+    except classmodel.DoesNotExist:
+        return None
+
 
 """
 FeatureView
@@ -52,7 +58,8 @@ class FeatureView(APIView):
     def get(self, request, id, doc_id, format=None):
         try:
             # extracts the extension out of the file type 
-            # getValue(ResultFeature, "docs_id", doc_id)
+            # response = get_or_none(ResultFeature, docs_id=doc_id)
+            # print(response.id)
             docs_feature = ResultFeature.objects.select_related('docs_id').get(docs_id=doc_id)
         except Exception as e:
             for i in threading.enumerate():

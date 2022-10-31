@@ -21,6 +21,8 @@ class ResultFeature(models.Model):
     def __str__(self):
         return self.docs_id.file_type
 
+
+
 class FeatureList(models.Model):
     name = models.CharField(max_length=100)
 

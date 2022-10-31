@@ -7,6 +7,9 @@ from rest_framework.validators import UniqueValidator
 
 from django.core.validators import RegexValidator
 from django.contrib.auth import get_user_model
+from django.core import exceptions
+import django.contrib.auth.password_validation as validators
+
 
 User = get_user_model()
 
@@ -33,17 +36,17 @@ class RegisterSerializer(serializers.Serializer):
         if password != confirm_password:
             raise serializers.ValidationError({"Password": "Password field must match"})
 
-        # errors = dict() 
-        # try:
-        #     # validate the password and catch the exception
-        #     validators.validate_password(password=password, user=CustomUser)
+        errors = dict() 
+        try:
+            # validate the password and catch the exception
+            validators.validate_password(password=password, user=User)
 
-        # # the exception raised here is different than serializers.ValidationError
-        # except exceptions.ValidationError as e:
-        #     errors['password'] = list(e.messages)
+        # the exception raised here is different than serializers.ValidationError
+        except exceptions.ValidationError as e:
+            errors['password'] = list(e.messages)
 
-        # if errors:
-        #     raise serializers.ValidationError(errors)
+        if errors:
+            raise serializers.ValidationError(errors)
         
         return super(RegisterSerializer, self).validate(attrs)
 
